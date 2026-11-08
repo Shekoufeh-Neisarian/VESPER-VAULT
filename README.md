@@ -18,7 +18,7 @@ A spear-phishing awareness project built around a fictional CD PROJEKT RED (CDPR
 | [email.html](code/email.html) | Gophish email template with its tracked link |
 | [landing.html](code/landing.html) | VESPER // VAULT asset portal and awareness popup |
 
-The repository is organized into `presentation/`, `report/` and `code/` folders. **The links above work when the names and capitalization match the files uploaded to GitHub.**
+The repository is organized into `presentation/`, `report/` and `code/` folders.
 
 ## Tools and workflow
 
