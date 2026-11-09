@@ -21,6 +21,14 @@ A spear-phishing awareness project built around a fictional CD PROJEKT RED (CDPR
 
 The repository is organized into `presentation/`, `report/` and `code/` folders, with the standalone quiz in the repository root.
 
+## Interactive phishing quiz
+
+The project includes a five-question phishing-awareness quiz based on the VESPER // VAULT scenario.
+
+To play, download [vesper_phishing_quiz.html](vesper_phishing_quiz.html) and open it in Firefox or Chrome.
+
+The quiz provides immediate feedback, explanations, and a final score. It runs directly in the browser without a server, Docker, or Gophish.
+
 ## Tools and workflow
 
 **Gophish** manages the campaign, email template, recipient group, landing page and link-click results. **SMTP** (port `1025`) carries the messages to **MailHog**, which stores them and displays them in a browser on port `8025`.
