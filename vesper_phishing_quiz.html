@@ -1,0 +1,299 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VESPER // VAULT — Spot the Phish</title>
+<style>
+:root {
+  --bg:#090d14; --panel:#141e29; --line:#344b51;
+  --green:#a4f1bd; --red:#ff777b; --gold:#f1c98c;
+}
+* { box-sizing:border-box }
+body {
+  margin:0; min-height:100vh; padding:25px 14px;
+  font:16px/1.55 system-ui,Arial,sans-serif;
+  color:#eff5f1;
+  background:radial-gradient(circle at top right,#254135,transparent 48%),
+             radial-gradient(circle at bottom left,#30212b,transparent 50%),
+             var(--bg);
+}
+main { max-width:800px; margin:auto }
+header { margin:28px 0 }
+.brand { color:var(--green); font-weight:800; letter-spacing:3px }
+h1 {
+  font: bold clamp(42px,8vw,70px)/1.1 Georgia,serif;
+  margin:14px 0;
+}
+h1 span { color:var(--green) }
+.sub { color:#c7d8cf }
+.card {
+  border:1px solid var(--line); border-radius:18px;
+  padding:clamp(22px,5vw,40px);
+  background:linear-gradient(140deg,#182630,#0e171e);
+  box-shadow:0 20px 60px #0008;
+}
+.tag {
+  display:inline-block; color:var(--gold);
+  font-size:12px; font-weight:bold;
+  letter-spacing:2px; text-transform:uppercase;
+}
+h2 { margin:12px 0 18px; line-height:1.3 }
+.context {
+  padding:15px; border-left:3px solid var(--gold);
+  background:#0b141b; color:#d4e0d8;
+  margin-bottom:22px;
+}
+.option {
+  width:100%; display:block; text-align:left;
+  margin:10px 0; padding:16px;
+  border:1px solid #475a60; border-radius:10px;
+  background:#1a2a34; color:white;
+  font:inherit; cursor:pointer;
+}
+.option:hover:not(:disabled) { border-color:var(--green) }
+.option:disabled { cursor:default; opacity:1 }
+.correct { border-color:var(--green); background:#183b2d }
+.wrong { border-color:var(--red); background:#47252a }
+.feedback {
+  padding:17px; margin:18px 0;
+  border-radius:10px; background:#102d26;
+  border:1px solid var(--green);
+}
+.feedback.bad { background:#392428; border-color:var(--red) }
+button.primary {
+  border:0; border-radius:9px; padding:14px 25px;
+  font:inherit; font-weight:800; cursor:pointer;
+  background:var(--green); color:#071c10;
+  margin-top:15px;
+}
+button:focus-visible { outline:3px solid var(--gold); outline-offset:3px }
+.progress {
+  height:7px; background:#273a42;
+  border-radius:10px; margin:18px 0 26px; overflow:hidden;
+}
+#bar { height:100%; width:0%; background:var(--green); transition:width .2s }
+.meta { display:flex; justify-content:space-between; color:#b9cbc5 }
+.score { font-size:75px; font-weight:900; color:var(--green) }
+footer { padding:25px 0; color:#a9bdb5; font-size:13px }
+[hidden] { display:none!important }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="brand">VESPER // VAULT</div>
+    <h1>Spot the <span>Phish.</span></h1>
+    <p class="sub">
+      Project VESPER-07 · Cybersecurity Awareness
+      <br>Five decisions. Can you recognize the warning signs?
+    </p>
+  </header>
+
+  <section class="card">
+    <div id="welcome">
+      <div class="tag">Mission briefing</div>
+      <h2>The asset-handoff trap</h2>
+      <p>
+        You're a game developer receiving an unexpected
+        character-art package from an outside studio.
+        Make five security decisions and learn what to
+        check before trusting an email or website.
+      </p>
+      <button class="primary" onclick="start()">
+        Start Mission →
+      </button>
+    </div>
+
+    <div id="quiz" hidden>
+      <div class="meta">
+        <span id="count"></span>
+        <span id="points"></span>
+      </div>
+      <div class="progress"><div id="bar"></div></div>
+      <div class="tag" id="scene"></div>
+      <h2 id="question"></h2>
+      <div class="context" id="context"></div>
+      <div id="options"></div>
+      <div id="feedback" class="feedback" hidden aria-live="polite"></div>
+      <button class="primary" id="next" onclick="next()" hidden>
+        Next →
+      </button>
+    </div>
+
+    <div id="results" hidden>
+      <div class="tag">Mission complete</div>
+      <h2 id="resultTitle"></h2>
+      <div class="score" id="finalScore"></div>
+      <p id="resultText"></p>
+      <p>
+        Remember: <strong>Stop. Verify. Report.</strong>
+        Never enter company credentials into an
+        unverified website.
+      </p>
+      <button class="primary" onclick="start()">
+        Play Again
+      </button>
+    </div>
+  </section>
+
+  <footer>
+    VESPER // VAULT · Phishing Awareness Project
+    <br>Fictional training scenario · No personal data collected
+  </footer>
+</main>
+
+<script>
+const questions = [
+  {
+    scene:"01 / Unexpected handoff",
+    question:"An outside artist sends you an unexpected VESPER-07 package. What should you do first?",
+    context:"The email looks professional and asks you to review new character artwork.",
+    answers:[
+      "Open the link because the artwork looks relevant.",
+      "Verify the request through an established project communication channel.",
+      "Forward the email to everyone on your team.",
+      "Download the files immediately to avoid delays."
+    ],
+    correct:1,
+    explanation:"Even convincing emails can be fake. Verify unusual asset requests through a trusted channel before opening links."
+  },
+  {
+    scene:"02 / Suspicious link",
+    question:"The email button leads to an unfamiliar asset-sharing domain. What is the safest choice?",
+    context:"The button says OPEN ASSET REVIEW, but the actual destination is not the team's usual file-sharing platform.",
+    answers:[
+      "Trust it because the button looks official.",
+      "Trust it because the URL starts with HTTPS.",
+      "Check the destination and confirm it using a trusted channel.",
+      "Open the link in every browser to test it."
+    ],
+    correct:2,
+    explanation:"A secure HTTPS connection does not prove that a website is legitimate. Verify the domain and the sharing process."
+  },
+  {
+    scene:"03 / Fake login",
+    question:"The asset portal asks for your company password. What should you do?",
+    context:"You reached an unfamiliar page claiming that company login is required to view the artwork.",
+    answers:[
+      "Enter your password to unlock the assets.",
+      "Try a colleague's account instead.",
+      "Enter your password only if the page has a padlock.",
+      "Stop and verify the portal through the official company process."
+    ],
+    correct:3,
+    explanation:"Do not enter credentials into an unverified portal. Contact the project owner or security team through a trusted channel."
+  },
+  {
+    scene:"04 / Accidental click",
+    question:"You clicked a suspicious link but entered no information. What should you do?",
+    context:"The page appeared unusual, and you're worried that the click itself may have created a security risk.",
+    answers:[
+      "Report the suspicious link and explain what happened.",
+      "Delete the email and keep the incident secret.",
+      "Continue browsing the page.",
+      "Assume there is no risk because no password was entered."
+    ],
+    correct:0,
+    explanation:"Clicking a link does not always mean compromise, but reporting promptly allows the security team to assess the risk."
+  },
+  {
+    scene:"05 / Account protection",
+    question:"You entered your password into a fake portal. What is the best next step?",
+    context:"You now realize that the website was not an approved company service.",
+    answers:[
+      "Close the tab and do nothing.",
+      "Report it immediately and change your password through the official process.",
+      "Wait until your account is locked.",
+      "Send your password to a teammate for checking."
+    ],
+    correct:1,
+    explanation:"Report the incident immediately. Follow the official account-recovery process so security staff can protect your account and revoke affected sessions."
+  }
+];
+
+let index=0, score=0, answered=false;
+const el=id=>document.getElementById(id);
+
+function show(id) {
+  ["welcome","quiz","results"].forEach(
+    name=>el(name).hidden=name!==id
+  );
+}
+
+function start() {
+  index=0;
+  score=0;
+  show("quiz");
+  render();
+}
+
+function render() {
+  answered=false;
+  const q=questions[index];
+  el("count").textContent=`Question ${index+1} of 5`;
+  el("points").textContent=`Score ${score}/5`;
+  el("bar").style.width=`${index*20}%`;
+  el("scene").textContent=q.scene;
+  el("question").textContent=q.question;
+  el("context").textContent=q.context;
+  el("feedback").hidden=true;
+  el("next").hidden=true;
+
+  const container=el("options");
+  container.replaceChildren();
+
+  q.answers.forEach((answer,i)=>{
+    const button=document.createElement("button");
+    button.className="option";
+    button.textContent=String.fromCharCode(65+i)+". "+answer;
+    button.onclick=()=>choose(i);
+    container.appendChild(button);
+  });
+}
+
+function choose(selected) {
+  if(answered) return;
+  answered=true;
+  const q=questions[index];
+  const correct=selected===q.correct;
+  if(correct) score++;
+
+  [...el("options").children].forEach((button,i)=>{
+    button.disabled=true;
+    if(i===q.correct) button.classList.add("correct");
+    else if(i===selected) button.classList.add("wrong");
+  });
+
+  const box=el("feedback");
+  box.hidden=false;
+  box.className=correct?"feedback":"feedback bad";
+  box.textContent=(correct?"Correct! ":"Safer answer: ")+q.explanation;
+  el("points").textContent=`Score ${score}/5`;
+  el("next").hidden=false;
+  el("next").textContent=index===4?"See Results →":"Next →";
+}
+
+function next() {
+  if(!answered) return;
+  index++;
+  if(index<questions.length) {
+    render();
+  } else {
+    show("results");
+    el("finalScore").textContent=`${score}/5`;
+    el("resultTitle").textContent=
+      score===5?"Mission Cleared!":
+      score>=3?"Good Work!":"Keep Practicing!";
+    el("resultText").textContent=
+      score===5
+      ?"Excellent! You recognized all five phishing risks."
+      :score>=3
+      ?"You spotted several warning signs. Review the explanations and try again."
+      :"Phishing can look like an ordinary work request. Practice verifying unexpected links and reporting suspicious activity.";
+  }
+}
+</script>
+</body>
+</html>
